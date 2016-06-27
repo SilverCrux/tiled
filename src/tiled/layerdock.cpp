@@ -188,6 +188,45 @@ void LayerDock::editLayerName()
 
 void LayerDock::sliderValueChanged(int opacity)
 {
+    {
+        const int hue = 40;
+        const int sat = 16;
+
+        auto fromValue = [=](int value) {
+            return QColor::fromHsv(hue, sat, value);
+        };
+
+        const qreal darkness = qreal(opacity) / 100;
+        const int windowV = 32.0 + 192.0 * darkness;
+        const bool isLight = windowV > 128;
+        const int baseV = isLight ? qMin(255, windowV + 48) : qMax(0, windowV - 24);
+
+        const int lightTextValue = qMin(255, baseV + 192);
+        const int darkTextValue = qMax(0, baseV - 192);
+        const int lightTextDisabledValue = (baseV + lightTextValue) / 2;
+        const int darkTextDisabledValue = (baseV + darkTextValue) / 2;
+
+        const QColor lightText = fromValue(lightTextValue);
+        const QColor darkText = fromValue(darkTextValue);
+
+        QPalette palette(fromValue(windowV + 10));
+        palette.setColor(QPalette::Base, fromValue(baseV));
+        palette.setColor(QPalette::AlternateBase, fromValue(baseV - 10));
+        palette.setColor(QPalette::Highlight, QColor(48, 140, 198));
+        palette.setColor(QPalette::Window, fromValue(windowV));
+        palette.setColor(QPalette::WindowText, isLight ? darkText : lightText);
+        palette.setColor(QPalette::ButtonText, isLight ? darkText : lightText);
+        palette.setColor(QPalette::Text, isLight ? darkText : lightText);
+        palette.setColor(QPalette::Light, QColor(255, 255, 255, 55));
+        palette.setColor(QPalette::Dark, fromValue(windowV * 0.7));
+
+        palette.setColor(QPalette::Disabled, QPalette::WindowText, fromValue(isLight ? darkTextDisabledValue : lightTextDisabledValue));
+        palette.setColor(QPalette::Disabled, QPalette::ButtonText, fromValue(isLight ? darkTextDisabledValue : lightTextDisabledValue));
+        palette.setColor(QPalette::Disabled, QPalette::Text, fromValue(isLight ? darkTextDisabledValue : lightTextDisabledValue));
+
+        QApplication::setPalette(palette);
+    }
+
     if (!mMapDocument)
         return;
 

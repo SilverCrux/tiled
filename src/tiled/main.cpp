@@ -31,6 +31,7 @@
 #include "sparkleautoupdater.h"
 #include "standardautoupdater.h"
 #include "tiledapplication.h"
+#include "tiledstyle.h"
 #include "tileset.h"
 #include "winsparkleautoupdater.h"
 
@@ -176,6 +177,26 @@ int main(int argc, char *argv[])
 #endif
 
     TiledApplication a(argc, argv);
+
+    const int hue = 40;
+    const int sat = 16;
+    const qreal darkness = 0.5;
+    const int v = 230.0 * darkness;
+
+    QPalette defaultPalette = a.palette();
+
+    QPalette palette(QColor::fromHsv(hue, sat, 190 * darkness));
+    palette.setBrush(QPalette::Highlight, defaultPalette.highlight());//QColor(48, 140, 198));
+    palette.setColor(QPalette::Window, QColor::fromHsv(hue, sat, 180 * darkness));
+    palette.setBrush(QPalette::WindowText, v > 128 ? QColor::fromHsv(hue, sat, 10) : QColor::fromHsv(hue, sat, 240));
+    palette.setColor(QPalette::Light, QColor::fromHsv(hue, sat, 235 * darkness));
+    palette.setColor(QPalette::Dark, QColor::fromHsv(hue, sat, 130 * darkness));
+    palette.setColor(QPalette::Base, QColor::fromHsv(hue, sat, 230 * darkness));
+    palette.setColor(QPalette::AlternateBase, QColor::fromHsv(hue, sat, 220 * darkness));
+
+    a.setPalette(palette);
+
+    a.setStyle(new TiledStyle);
 
     a.setOrganizationDomain(QLatin1String("mapeditor.org"));
 #if defined(Q_OS_MAC) || defined(Q_OS_WIN)

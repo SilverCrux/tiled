@@ -47,6 +47,7 @@
 #include <QPainter>
 #include <QKeyEvent>
 #include <QApplication>
+#include <QPalette>
 
 #include <cmath>
 
@@ -64,7 +65,7 @@ MapScene::MapScene(QObject *parent):
     mUnderMouse(false),
     mCurrentModifiers(Qt::NoModifier),
     mDarkRectangle(new QGraphicsRectItem),
-    mDefaultBackgroundColor(Qt::darkGray),
+    mDefaultBackgroundColor(QApplication::palette().dark().color()),
     mObjectSelectionItem(nullptr)
 {
     setBackgroundBrush(mDefaultBackgroundColor);
